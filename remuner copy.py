@@ -17,7 +17,7 @@ def analisar_csv(caminho_arquivo):
         return None
 
 # Uso do script
-caminho_arquivo = r'M:\VS Code\remtotal.csv'
+caminho_arquivo = 'remtotal.csv'
 df_resultado = analisar_csv(caminho_arquivo)
 
 if df_resultado is not None:
@@ -129,7 +129,7 @@ df_novo = df_novo[df_novo['Total_Remuneracao'] >= 1000000]
 
 # deleta as linhas com os seguintes nomes na Nome_Companhia
 
-df_bbg = pd.read_excel(r'M:\VS Code\dadosbbg.xlsm', usecols=['NM_TICKER', 'DATA', 'NM_FIELD', 'VL_FIELD'], sheet_name='netinc') # quero especificar as colunas que eh para pegar
+df_bbg = pd.read_excel('dadosbbg.xlsm', usecols=['NM_TICKER', 'DATA', 'NM_FIELD', 'VL_FIELD'], sheet_name='netinc') # quero especificar as colunas que eh para pegar
 # gostaria que 12M_NET_INC seja coluna com seus respectivos valores
 #df_bbg = df_bbg.pivot(index='DATA', columns='NM_TICKER', values='VL_FIELD')
 
@@ -138,7 +138,7 @@ df_bbg.drop(columns=['NM_FIELD'], inplace=True)
 
 
 # importa o auxiliarbbg
-df_auxiliarbbg = pd.read_excel(r'M:\VS Code\auxiliarbbg.xlsx')
+df_auxiliarbbg = pd.read_excel('auxiliarbbg.xlsx')
 df_auxiliarbbg.rename(columns={'Ticker': 'NM_TICKER'}, inplace=True)
 
 #pega o Nome_Companhia do auxiliarbbg e coloca no df_bgg fazendo um merge
