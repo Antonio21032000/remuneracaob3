@@ -3,6 +3,7 @@ import csv
 from datetime import datetime
 import yfinance as yf
 from fuzzywuzzy import process
+import streamlit as st
 
 
 
@@ -199,10 +200,133 @@ df_novo = df_novo.sort_values('% da Remuneração Total sobre o Market Cap', asc
 #quero deixar sem empresas repetidas em Nome_Companhia
 df_novo = df_novo.drop_duplicates(subset='Nome_Companhia')
 
+import pandas as pd
+import csv
+from datetime import datetime
+import yfinance as yf
+from fuzzywuzzy import process
+import streamlit as st
+import plotly.express as px
 
+# [Previous code remains the same until the end]
 
-df_novo.to_excel('remtotal2024_novo.xlsx', index=False)
+# Streamlit UI
+st.set_page_config(layout="wide", page_title="Análise de Remuneração")
 
+st.title("Dashboard de Análise de Remuneração")
+
+# Sidebar filters
+st.sidebar.header("Filtros")
+
+# Filter by company name
+company_filter = st.sidebar.multiselect(
+    "Filtrar por Empresa",
+    options=df_novo["Nome_Companhia"].unique(),
+    default=[]
+)
+
+# Filter by remuneration range
+min_rem, max_rem = st.sidebar.slider(
+    "Faixa de Remuneração Total (R$)",
+    float(df_novo["Total_Remuneracao"].min()),
+    float(df_novo["Total_Remuneracao"].max()),
+    (float(df_novo["Total_Remuneracao"].min()), float(df_novo["Total_Remuneracao"].max()))
+)
+
+# Apply filters
+filtered_df = df_novo.copy()
+if company_filter:
+    filtered_df = filtered_df[filtered_df["Nome_Companhia"].isin(company_filter)]
+filtered_df = filtered_df[
+    (filtered_df["Total_Remuneracao"] >= min_rem) &
+    (filtered_df["Total_Remuneracao"] <= max_rem)
+]
+
+# Main content
+col1, col2 = st.columns(2)
+
+with col1:
+    st.subheader("Top 10 Empresas por Remuneração Total")
+    fig1 = px.bar(
+        filtered_df.head(10),
+        x="Nome_Companhia",
+        y="Total_Remuneracao",
+        title="Top 10 - Remuneração Total",
+    )
+    st.plotly_chart(fig1)
+
+with col2:
+    st.subheader("Remuneração Média por Órgão")
+    fig2 = px.bar(
+        filtered_df.head(10),
+        x="Nome_Companhia",
+        y=["Remuneração média da Diretoria", "Remuneração média do Conselho de Administração"],
+        title="Comparativo de Remuneração Média por Órgão",
+        barmode="group"
+    )
+    st.plotly_chart(fig2)
+
+# Metrics
+col3, col4, col5 = st.columns(3)
+with col3:
+    st.metric(
+        "Média de Remuneração Total",
+        f"R$ {filtered_df['Total_Remuneracao'].mean():,.2f}"
+    )
+with col4:
+    st.metric(
+        "Média de Membros Remunerados",
+        f"{filtered_df['Total_Membros_Remunerados'].mean():.1f}"
+    )
+with col5:
+    st.metric(
+        "Número de Empresas",
+        len(filtered_df)
+    )
+
+# Detailed data table
+st.subheader("Dados Detalhados")
+columns_to_display = [
+    "Nome_Companhia",
+    "Total_Remuneracao",
+    "Remuneração média da Companhia",
+    "Remuneração média da Diretoria",
+    "Remuneração média do Conselho de Administração",
+    "Total_Membros_Remunerados",
+    "% da Remuneração Total sobre o Net Income LTM",
+    "% da Remuneração Total sobre o EBITDA",
+    "% da Remuneração Total sobre o Market Cap"
+]
+
+# Format currency columns
+formatted_df = filtered_df[columns_to_display].copy()
+currency_columns = [
+    "Total_Remuneracao",
+    "Remuneração média da Companhia",
+    "Remuneração média da Diretoria",
+    "Remuneração média do Conselho de Administração"
+]
+for col in currency_columns:
+    formatted_df[col] = formatted_df[col].apply(lambda x: f"R$ {x:,.2f}")
+
+percentage_columns = [
+    "% da Remuneração Total sobre o Net Income LTM",
+    "% da Remuneração Total sobre o EBITDA",
+    "% da Remuneração Total sobre o Market Cap"
+]
+for col in percentage_columns:
+    formatted_df[col] = formatted_df[col].apply(lambda x: f"{x:.2%}")
+
+st.dataframe(formatted_df, use_container_width=True)
+
+# Download button
+csv = filtered_df[columns_to_display].to_csv(index=False)
+st.download_button(
+    label="Download dados em CSV",
+    data=csv,
+    file_name="analise_remuneracao.csv",
+    mime="text/csv"
+)
 
 print(df_novo.head())
 print(df_novo.info())
