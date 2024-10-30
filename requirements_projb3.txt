@@ -1,0 +1,9 @@
+pandas
+csv
+datetimeyfinance
+fuzzywuzzy
+streamlit
+openpyxl
+yfinance
+
+
