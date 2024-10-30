@@ -4,6 +4,7 @@ from datetime import datetime
 import yfinance as yf
 from fuzzywuzzy import process
 import streamlit as st
+import openpyxl
 
 
 
@@ -215,6 +216,7 @@ print(df_bbg2.info())
 
 print(df_bbg3.head())
 print(df_bbg3.info())
+
 
 
 
