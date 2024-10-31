@@ -5,5 +5,4 @@ fuzzywuzzy
 streamlit
 openpyxl
 yfinance
---upgrade --no-cache-dir yfinance
 
