@@ -4,5 +4,6 @@ datetimeyfinance
 fuzzywuzzy
 streamlit
 openpyxl
-yfinance==0.2.36
+yfinance
+--upgrade --no-cache-dir yfinance
 
