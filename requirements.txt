@@ -1,6 +1,6 @@
 pandas
 csv
-datetimeyfinance
+datetime
 fuzzywuzzy
 streamlit
 openpyxl
