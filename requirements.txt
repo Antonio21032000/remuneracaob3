@@ -4,6 +4,5 @@ datetimeyfinance
 fuzzywuzzy
 streamlit
 openpyxl
-yfinance
-
+yfinance==0.2.36
 
